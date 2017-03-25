@@ -1,5 +1,7 @@
 # clang-mapper
-`clang-mapper` is a standalone tool build for automatic generate [Call Graph](https://en.wikipedia.org/wiki/Call_graph) in iOS project
+`clang-mapper` is a standalone tool build for automatic generate [Call Graph](https://en.wikipedia.org/wiki/Call_graph) in iOS project  
+
+**[中文版](http://www.jianshu.com/p/e19aafbaddca)**
 
 ## Compile the source code
 You can just use the pre-compiled binary file in the `relaese` folder (Build with Clang5.0.0). Or you can compile the source code in `clang-mapper` folder by yourself  
