@@ -104,12 +104,6 @@ namespace clang {
             // We skip function template definitions, as their semantics is
             // only determined when they are instantiated.
             if (canBeCallerInGraph(FD) && FD->isThisDeclarationADefinition()) {
-                // Add all blocks declared inside this function to the graph.
-//                addRootNodesForBlocks(FD);
-//                // If this function has external linkage, anything could call it.
-//                // Note, we are not precise here. For example, the function could have
-//                // its address taken.
-//                addRootNodeForDecl(FD, FD->isGlobal());
                 addRootNode(FD);
             }
             return true;
@@ -122,8 +116,6 @@ namespace clang {
             }
 
             if (canBeCallerInGraph(MD)) {
-//                addRootNodesForBlocks(MD);
-//                addRootNodeForDecl(MD, true);
                 addRootNode(MD);
             }
             return true;
@@ -225,13 +217,12 @@ namespace llvm {
 
     template <> struct GraphTraits<clang::CallGraph*>
             : public GraphTraits<clang::CallGraphNode*> {
-        // P是CallGraph的迭代器
         static clang::CallGraphNode *
         CGGetValue(clang::CallGraph::const_iterator::value_type &P) {
             return P.second.get();
         }
 
-//         nodes_iterator/begin/end - Allow iteration over all nodes in the graph
+        // nodes_iterator/begin/end - Allow iteration over all nodes in the graph
         typedef mapped_iterator<clang::CallGraph::iterator, decltype(&CGGetValue)>
                 nodes_iterator;
 

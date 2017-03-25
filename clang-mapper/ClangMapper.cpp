@@ -2,8 +2,6 @@
 #include <clang/Tooling/CommonOptionsParser.h>
 #include <clang/Frontend/FrontendActions.h>
 #include <clang/Tooling/Tooling.h>
-#include <clang/ASTMatchers/ASTMatchers.h>
-#include <clang/ASTMatchers/ASTMatchFinder.h>
 #include "llvm/Option/OptTable.h"
 #include "clang/Driver/Options.h"
 #include "llvm/Support/FileSystem.h"
@@ -15,14 +13,12 @@
 
 using namespace std;
 using namespace clang::tooling;
-using namespace clang::ast_matchers;
 using namespace llvm;
 
 static llvm::cl::OptionCategory MyToolCategory("clang-mapper option");
 static std::unique_ptr<opt::OptTable> Options(clang::driver::createDriverOptTable());
 
 static cl::extrahelp CommonHelp(CommonOptionsParser::HelpMessage);
-//static cl::extrahelp MoreHelp("\n\n");
 
 static cl::opt<bool>
         DotOnly("dot-only", cl::desc("Generate dot file only"), cl::cat(MyToolCategory));
@@ -90,22 +86,24 @@ inline std::unique_ptr<FrontendActionFactory> clang::tooling::newFrontendActionF
 /// Convert related path to absolute path
 std::string getAbsolutePath(std::string relatedPath) {
     char cStr[PATH_MAX];
-    realpath(relatedPath.c_str(), cStr); // todo: 错误处理
+    realpath(relatedPath.c_str(), cStr);
     return string(cStr);
 }
 
 /// Return if filePath a code file(.h/.m/.c/.cpp)
+bool hasSuffix(string rawStr, string suffix) {
+    return rawStr.find(suffix) == (rawStr.length() - suffix.length());
+}
+
 bool isCodeFile(string filePath, bool ignoreHeader) {
-    if (filePath.find(".h") == (filePath.length() - 2) && !ignoreHeader) {
-        return true;
-    } else if (filePath.find(".m") == (filePath.length() - 2)) {
-        return true;
-    } else if (filePath.find(".c") == (filePath.length() - 2)) {
-        return true;
-    } else if (filePath.find(".cpp") == (filePath.length() - 4)) {
-        return true;
+    if (hasSuffix(filePath, ".h")) {
+        return !ignoreHeader;
+    } else {
+        return hasSuffix(filePath, ".m") ||
+               hasSuffix(filePath, ".mm") ||
+               hasSuffix(filePath, ".c") ||
+               hasSuffix(filePath, ".cpp");
     }
-    return false;
 }
 
 /// Get all .h/.m/.cpp/.c files in rootDir

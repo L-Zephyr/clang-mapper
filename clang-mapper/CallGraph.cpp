@@ -22,9 +22,6 @@ using namespace llvm;
 
 #define DEBUG_TYPE "CallGraph"
 
-STATISTIC(NumObjCCallEdges, "Number of Objective-C method call edges");
-STATISTIC(NumBlockCallEdges, "Number of block call edges");
-
 /// Split a string
 template<typename Out>
 void split(const std::string &s, char delim, Out result) {
@@ -78,13 +75,13 @@ namespace clang {
 
                 // Find the callee definition within the same translation unit.
                 Decl *D = nullptr;
-                if (ME->isInstanceMessage())
+                if (ME->isInstanceMessage()) {
                     D = IDecl->lookupPrivateMethod(Sel);
-                else
+                } else {
                     D = IDecl->lookupPrivateClassMethod(Sel);
+                }
 
                 // if not found, create a ObjCMethodDecl with Selector and loc
-                // todo: 自定义一个类型以区分Node是否有完整的Decl信息
                 if (!D) {
                     D = ObjCMethodDecl::Create(Context,
                                                ME->getLocStart(),
@@ -95,7 +92,6 @@ namespace clang {
                                                nullptr);
                 }
                 addCalledDecl(D);
-                NumObjCCallEdges++;
             }
         }
 
@@ -107,7 +103,6 @@ namespace clang {
             // Simple detection of a call through a block.
             Expr *CEE = CE->getCallee()->IgnoreParenImpCasts();
             if (BlockExpr *Block = dyn_cast<BlockExpr>(CEE)) {
-                NumBlockCallEdges++;
                 return Block->getBlockDecl();
             }
 

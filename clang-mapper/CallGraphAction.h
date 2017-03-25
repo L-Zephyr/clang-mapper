@@ -38,16 +38,6 @@ namespace clang {
         virtual std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
                 clang::CompilerInstance &Compiler, llvm::StringRef InFile);
 
-        virtual bool BeginInvocation(CompilerInstance &CI) {
-            CI.getDiagnostics().setClient(new IgnoringDiagConsumer());
-            return true;
-        }
-
-        virtual bool BeginSourceFileAction(CompilerInstance &CI,
-                                           StringRef Filename) {
-            return true;
-        }
-
         void setOption(CallGraphOption option) {
             this->option = option;
         }
