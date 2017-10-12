@@ -1,3 +1,5 @@
+**This project was deprecated, please go to [Drafter](https://github.com/L-Zephyr/Drafter)**
+
 # clang-mapper
 `clang-mapper` is a standalone tool build for automatic generate [Call Graph](https://en.wikipedia.org/wiki/Call_graph) in iOS project  
 
